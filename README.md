@@ -32,4 +32,4 @@ git clone https://github.com/Canjyujan/NFTticket.git
 cd NFTticket
 
 # 启动后端（需先部署智能合约）
-python app.py
+python backend/app.py
