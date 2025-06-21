@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的票</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <h1>🎫我的NFT票务中心</h1>
+        </header>
+
+        <!-- tab切换 -->
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('primary')">一级市场</div>
+            <div class="tab" onclick="showTab('secondary')">二级市场</div>
+        </div>
+
+        <!-- 一级市场 -->
+        <section id="primary" class="marketplace tab-content active">
+            <h2>🛒平台在售票券</h2>
+            {% for ticket in tickets_for_sale_primary %}
+                <div class="ticket">
+                    <p><strong>活动：</strong> {{ ticket.event }}</p>
+                    <p><strong>时间：</strong> {{ ticket.date }}</p>
+                    <p><strong>价格：</strong> {{ ticket.price }} ETH</p>
+                    <form method="post" action="{{ url_for('buy_ticket_route', token_id=ticket.token_id) }}">
+                        <button onclick="buyTicketWithMetaMask({{ ticket.token_id }})" class="btn">立即购买</button>
+                        <script>
+                            async function buyTicketWithMetaMask(tokenId) {
+                                if (typeof window.ethereum !== 'undefined') {
+                                    try {
+                                        // 请求账户授权
+                                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                                        const userAddress = accounts[0];
+                                        const response = await fetch(`/buy_ticket/${tokenId}`, {
+                                            method: 'POST',
+                                            headers: {'Content-Type': 'application/json'},
+                                            body: JSON.stringify({ buyer_address: userAddress })
+                                        });
+                                        const result = await response.json();
+                                        if (result.success) {
+                                            alert('购票成功！交易哈希: ' + result.tx_hash);
+                                            window.location.reload();
+                                        } else { alert('购票失败: ' + result.error);}
+                                    } catch (err) {
+                                        console.error(err);
+                                        alert("MetaMask 错误: " + err.message);
+                                        }
+                                } else { alert("请安装 MetaMask 钱包"); }
+                            }
+                        </script>
+
+                    </form>
+                </div>
+            {% else %}
+                <p>当前暂无票券在售~</p>
+            {% endfor %}
+        </section>
+
+        <!-- 二级市场 -->
+        <section id="secondary" class="marketplace tab-content">
+            <h2>👥用户转售票券</h2>
+            {% for ticket in tickets_for_sale_secondary %}
+                <div class="ticket">
+                    <p><strong>活动：</strong> {{ ticket.event }}</p>
+                    <p><strong>时间：</strong> {{ ticket.date }}</p>
+                    <p><strong>价格：</strong> {{ ticket.price }} ETH</p>
+                    <form action="/buy_ticket/{{ ticket.token_id }}" method="POST">
+                        <button class="btn">立即购买</button>
+                    </form>
+                </div>
+            {% else %}
+                <p>当前暂无用户转售票券。</p>
+            {% endfor %}
+        </section>
+
+        <section class="my-tickets">
+            <h2>🎟我的票券</h2>
+            {% for ticket in tickets %}
+                <div class="ticket">
+                <img src="{{ ticket.image }}" alt="门票图像" class="ticket-image" style="max-width: 200px; border-radius: 10px;">
+                    <p><strong>活动：</strong> {{ ticket["event"] }}</p>
+                    <p><strong>时间：</strong> {{ ticket["date"] }}</p>
+                    <p><strong>价格：</strong> {{ ticket["price"] }} ETH</p>
+                    <p><strong>描述：</strong> {{ ticket["description"] }}</p>
+                    <p><strong>Token ID:</strong> {{ ticket["token_id"] }}</p>
+
+                <!-- 转售按钮 -->
+                    <form action="/resell_ticket/{{ ticket.token_id }}" method="POST">
+                        <button class="btn">转售</button>
+                    </form>
+                </div>
+            {% else %}
+                <p>诶∑( 口 ||你还没有票哦，快去买一张试试吧！</p>
+            {% endfor %}
+        </section>
+
+        <footer>
+            <a href="/" class="btn">返回首页</a>
+        </footer>
+    </main>
+
+    <script>
+        function showTab(tabId) {
+            // 切换按钮样式
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+
+            // 切换内容区
+            document.querySelectorAll('.tab-content').forEach(section => section.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

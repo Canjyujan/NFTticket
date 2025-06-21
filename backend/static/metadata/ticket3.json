@@ -1,0 +1,8 @@
+{
+  "name": "音乐节门票",
+  "event": "夏日音乐节",
+  "date": "2025-06-11 18:00",
+  "price": 0.05,
+  "image": "backend/static/pictures/夏日音乐节.jpg",
+  "description": "这是一张音乐节的门票。"
+}

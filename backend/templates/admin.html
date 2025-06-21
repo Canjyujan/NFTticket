@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>铸造票务</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>管理员铸造NFT门票</h2>
+        <!-- admin.html 中 form 上方 -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <form method="POST">
+            <label>接收地址：</label><br>
+            <input type="text" name="to" required><br><br>
+            <label>票据元数据URI：</label><br>
+            <input type="text" name="uri" required><br><br>
+            <button type="submit" class="btn">铸造门票</button>
+        </form>
+
+        {% if minted %}
+            <div class="success-box">
+                ✅ 铸造成功！Token ID: {{ token_id }}<br>
+                🎫 <a href="{{ uri }}" target="_blank">查看元数据</a>
+            </div>
+        {% endif %}
+
+        <a href="/" class="btn">返回首页</a>
+    </div>
+</body>
+</html>

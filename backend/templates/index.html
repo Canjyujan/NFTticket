@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>NFT票务系统</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Hi~ o(*￣▽￣*)ブ欢迎来到NFT票务平台</h1>
+        <button onclick="goToMyTickets()" class="btn">🎫查看我的票</button>
+        <button class="btn" onclick="window.location.href='/admin'">👮管理员入口</button>
+        <script>
+            async function goToMyTickets() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const address = accounts[0];
+                    window.location.href = `/my_tickets?address=${address}`;
+                    } catch (error) {
+                        alert("请连接钱包以查看您的票务信息");
+                    }
+                } else {
+                    alert("未检测到 MetaMask，请安装插件");
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>

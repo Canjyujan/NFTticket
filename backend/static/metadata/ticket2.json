@@ -1,0 +1,8 @@
+{
+  "name": "电竞赛事门票",
+  "event": "KPL",
+  "date": "2025-05-11 18:00",
+  "price": 15,
+  "image": "https://yourcdn.com/ticket123.png",
+  "description": "这是一张KPL春决的门票。"
+}
